@@ -1,23 +1,22 @@
-# TÍTULO DO PROJETO
+# Hospfy
 
-`CURSO`
+`CURSO` Ciência da Computação
 
-`DISCIPLINA`
+`DISCIPLINA` Engenharia de Software II
 
-`SEMESTRE`
+`SEMESTRE` 7°
 
-Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo desenvolvido.
+O projeto Hospfy é um aplicativo móvel voltado para a gestão de solicitações e comunicação interna em hotéis, conectando hóspedes, funcionários e gestores em uma única plataforma. A proposta é substituir processos manuais e demorados, como ligações para a recepção, por um sistema digital onde o hóspede pode solicitar serviços (como limpeza ou room service), acompanhar o status em tempo real e até cancelar pedidos. Ao mesmo tempo, a equipe do hotel recebe essas demandas em um painel centralizado, podendo organizar, distribuir tarefas e monitorar o andamento dos serviços. Com isso, o sistema busca aumentar a eficiência operacional, melhorar a experiência do hóspede e trazer mais controle e transparência para a gestão do hotel.
 
 ## Integrantes
 
 * Matheus Eduardo Silva
-* Nome completo do aluno 2
-* Nome completo do aluno 3
-* Nome completo do aluno 4
+* Vinicius Dias de Oliveira
+* Luis Ricardo Cardoso
 
 ## Orientador
 
-* Nome completo do professor 1
+* Diego Roberto Gonçalves de Pontes
 
 ## Instruções de utilização
 
