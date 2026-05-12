@@ -26,7 +26,7 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 <ol>
 <li><a href="docs/01-Warmup_Project.md"> Warmup do Projeto</a></li>
-<li><a href="docs/02-Especificação do Projeto.md"> Especificação do Projeto</a></li>
+<li><a href="docs/02-Sprint1.md"> Sprint 1 - Análise dos Requisitos e Identificação das Classes</a></li>
 <li><a href="docs/03-Metodologia.md"> Metodologia</a></li>
 <li><a href="docs/04-Projeto de Interface.md"> Projeto de Interface</a></li>
 <li><a href="docs/05-Arquitetura da Solução.md"> Arquitetura da Solução</a></li>
