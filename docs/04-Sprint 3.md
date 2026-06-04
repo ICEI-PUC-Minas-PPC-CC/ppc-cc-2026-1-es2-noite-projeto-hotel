@@ -1,36 +1,128 @@
 
-# Projeto de Interface
 
-<span style="color:red">Pré-requisitos: <a href="2-Especificação do Projeto.md"> Documentação de Especificação</a></span>
+# Sprint 3 — Definição da Arquitetura do Sistema
+---
 
-Visão geral da interação do usuário pelas telas do sistema e protótipo interativo das telas com as funcionalidades que fazem parte do sistema (wireframes).
+## 1. Arquitetura Escolhida
 
- Apresente as principais interfaces da plataforma. Discuta como ela foi elaborada de forma a atender os requisitos funcionais, não funcionais e histórias de usuário abordados nas <a href="2-Especificação do Projeto.md"> Documentação de Especificação</a>.
+O Hospfy adota a **Arquitetura em Camadas** (*Layered Architecture*), organizando o sistema em cinco camadas verticais com dependência unidirecional: cada camada só se comunica com a imediatamente abaixo, nunca pulando níveis.
 
-## Diagrama de Fluxo
+---
 
-O diagrama apresenta o estudo do fluxo de interação do usuário com o sistema interativo e  muitas vezes sem a necessidade do desenho do design das telas da interface. Isso permite que o design das interações seja bem planejado e gere impacto na qualidade no design do wireframe interativo que será desenvolvido logo em seguida.
+## 2. Estrutura das Camadas
 
-O diagrama de fluxo pode ser desenvolvido com “boxes” que possuem internamente a indicação dos principais elementos de interface - tais como menus e acessos - e funcionalidades, tais como editar, pesquisar, filtrar, configurar - e a conexão entre esses boxes a partir do processo de interação. Você pode ver mais explicações e exemplos https://www.lucidchart.com/blog/how-to-make-a-user-flow-diagram.
 
-![Exemplo de Diagrama de Fluxo](img/diagramafluxo2.jpg)
+![Diagrama UML](https://raw.githubusercontent.com/ICEI-PUC-Minas-PPC-CC/ppc-cc-2026-1-es2-noite-projeto-hotel/main/docs/img/Diagrama_da_Estrutura.png)
 
-As referências abaixo irão auxiliá-lo na geração do artefato “Diagramas de Fluxo”.
 
-> **Links Úteis**:
-> - [Fluxograma online: seis sites para fazer gráfico sem instalar nada | Produtividade | TechTudo](https://www.techtudo.com.br/listas/2019/03/fluxograma-online-seis-sites-para-fazer-grafico-sem-instalar-nada.ghtml)
+---
 
-## Wireframes
+## 3. Responsabilidades por Camada
 
-![Exemplo de Wireframe](img/wireframe-example.png)
+### Frontend
+Camada de apresentação. Responsável por todas as interfaces visuais do sistema, sem conter lógica de negócio. Exibe dados e captura ações do usuário.
 
-São protótipos usados em design de interface para sugerir a estrutura de um site web e seu relacionamentos entre suas páginas. Um wireframe web é uma ilustração semelhante do layout de elementos fundamentais na interface.
- 
-> **Links Úteis**:
-> - [Protótipos vs Wireframes](https://www.nngroup.com/videos/prototypes-vs-wireframes-ux-projects/)
-> - [Ferramentas de Wireframes](https://rockcontent.com/blog/wireframes/)
-> - [MarvelApp](https://marvelapp.com/developers/documentation/tutorials/)
-> - [Figma](https://www.figma.com/)
-> - [Adobe XD](https://www.adobe.com/br/products/xd.html#scroll)
-> - [Axure](https://www.axure.com/edu) (Licença Educacional)
-> - [InvisionApp](https://www.invisionapp.com/) (Licença Educacional)
+- Interface do hóspede: catálogo de serviços, acompanhamento de pedidos, notificações
+- Interface do funcionário: lista de tarefas atribuídas, atualização de status
+- Interface do gestor: painel administrativo, relatórios, atribuição de tarefas, filtros
+
+### Controller
+Ponto de entrada das requisições HTTP vindas do Frontend.
+
+- Receber requisições HTTP
+- Executar validações básicas de formato e estrutura dos dados
+- Acionar a camada de serviço correspondente
+- Retornar a resposta adequada (sucesso ou erro) ao cliente
+
+> O Controller **não** toma decisões de negócio. Apenas orquestra a entrada e saída da requisição.
+
+### Service
+Camada central da lógica de negócio. Define o comportamento do sistema.
+
+- Criar e cancelar pedidos
+- Atualizar status de pedidos
+- Atribuir pedidos a funcionários
+- Gerar relatórios operacionais
+- Enviar notificações para hóspedes e funcionários
+- Verificar disponibilidade de serviços
+
+### Repository
+Responsável exclusivamente pelo acesso e persistência dos dados. Abstrai as operações de banco de dados, isolando o Service dos detalhes de infraestrutura.
+
+- Salvar novos registros
+- Atualizar registros existentes
+- Consultar dados por filtros e períodos
+- Excluir registros
+
+### Banco de Dados
+Camada de infraestrutura onde as entidades do sistema são persistidas.
+
+Entidades armazenadas: `Pedido`, `Hospede`, `Servico`, `Categoria`, `Funcionario`, `Gestor`, `Notificacao`, `Relatorio`, `AtribuicaoPedido`, `InformacaoHotel`
+
+---
+
+## 4. Comunicação entre os Componentes
+
+A comunicação entre o Frontend e o backend segue o estilo **API REST** sobre HTTP, com dados trafegando em formato **JSON**.
+
+### Fluxo de uma requisição
+
+```
+Frontend  →  Controller  →  Service  →  Repository  →  Banco de Dados
+         ←              ←           ←              ←
+```
+
+### Verbos HTTP utilizados
+
+| Verbo HTTP    | Uso no Hospfy                                        |
+|---------------|------------------------------------------------------|
+| `GET`         | Consultar catálogo, acompanhar pedido, listar relatórios, visualizar informações do hotel |
+| `POST`        | Criar pedido, solicitar serviço, enviar notificação  |
+| `PUT / PATCH` | Atualizar status do pedido, atribuir funcionário     |
+| `DELETE`      | Cancelar pedido                                      |
+
+### Exemplo de fluxo: Hóspede solicita um serviço
+
+1. **Frontend** envia `POST /pedidos` com dados do serviço e observações
+2. **Controller** recebe a requisição, valida os campos obrigatórios e aciona o `PedidoService`
+3. **Service** aplica as regras de negócio: verifica disponibilidade do serviço, cria o pedido e aciona o envio de notificação
+4. **Repository** persiste o novo pedido e a notificação no banco de dados
+5. A resposta percorre o caminho inverso até o Frontend, que exibe a confirmação ao hóspede
+
+---
+
+## 5. Justificativa da Arquitetura
+
+A escolha da Arquitetura em Camadas se justifica por quatro razões diretamente ligadas às características do Hospfy:
+
+**Separação de responsabilidades**
+Cada camada tem um papel bem definido, evitando que lógica de negócio apareça no Controller ou que consultas ao banco apareçam no Service — problemas comuns em sistemas que crescem sem estrutura.
+
+**Manutenibilidade**
+Alterações em uma camada não propagam impacto desnecessário nas demais. Trocar o banco de dados, por exemplo, exige mudança apenas no Repository, sem tocar no Service ou no Controller.
+
+**Aderência aos requisitos não funcionais**
+A escalabilidade (RNF04) e a segurança dos dados (RNF05) são facilitadas pela separação em camadas: é possível escalar componentes de forma independente e aplicar autenticação de maneira centralizada no Controller.
+
+**Adequação ao porte do projeto**
+O Hospfy possui complexidade média, com domínio bem delimitado e fluxo de dados previsível. A Arquitetura em Camadas entrega organização suficiente sem a sobrecarga operacional de abordagens mais complexas, como microsserviços.
+
+---
+
+## 6. Rastreabilidade com os Requisitos
+
+| Requisito | Camada responsável |
+|-----------|--------------------|
+| RF01 – Visualizar catálogo de serviços | Frontend + Controller + Service |
+| RF02 – Solicitar serviço | Frontend + Controller + Service + Repository |
+| RF03 – Adicionar observações ao pedido | Frontend + Controller + Service |
+| RF04 – Acompanhar status do pedido | Frontend + Controller + Service + Repository |
+| RF05 – Cancelar pedido | Frontend + Controller + Service + Repository |
+| RF06 – Visualizar painel administrativo | Frontend + Controller + Service |
+| RF07 – Atribuir tarefas para funcionários | Controller + Service + Repository |
+| RF08 – Gerar relatórios | Controller + Service + Repository |
+| RF09 – Receber notificações | Service + Repository |
+| RF10 – Consultar informações do hotel | Frontend + Controller + Repository |
+| RNF01 – Atualização em tempo real | Service + Repository |
+| RNF04 – Escalabilidade | Arquitetura em camadas (separação de responsabilidades) |
+| RNF05 – Segurança dos dados | Controller (validação) + Repository (acesso isolado) |
