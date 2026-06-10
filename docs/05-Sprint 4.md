@@ -1,4 +1,5 @@
 Sprint 4 — Organização, Integração e Planejamento do MVP
+
 1. Definição do Escopo do MVP
 O Produto Mínimo Viável (MVP) do Hospfy será focado no fluxo primário de geração de valor do sistema: a capacidade do hóspede de solicitar um serviço e a capacidade da equipe do hotel de receber e atualizar o status dessa solicitação.
 
