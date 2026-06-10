@@ -1,66 +1,265 @@
-Sprint 4 — Organização, Integração e Planejamento do MVP
+# Sprint 4 — Organização, Integração e Planejamento do MVP
 
-1. Definição do Escopo do MVP
-O Produto Mínimo Viável (MVP) do Hospfy será focado no fluxo primário de geração de valor do sistema: a capacidade do hóspede de solicitar um serviço e a capacidade da equipe do hotel de receber e atualizar o status dessa solicitação.
+## 1. Definição do Escopo do MVP
 
-O que ENTRA no escopo do MVP:
+O Produto Mínimo Viável (MVP) do *Hospfy* será focado no fluxo primário de geração de valor do sistema: a capacidade do hóspede de solicitar um serviço e a capacidade da equipe do hotel de receber e atualizar o status dessa solicitação.
 
-Catálogo de Serviços (RF01): Visualização das categorias e serviços disponíveis pelo hóspede.
+### ✅ O que ENTRA no escopo do MVP
 
-Solicitação de Serviços (RF02 e RF03): Criação do pedido diretamente pelo aplicativo, com a possibilidade de adicionar observações.
+#### Catálogo de Serviços (RF01)
+Visualização das categorias e serviços disponíveis para o hóspede.
 
-Acompanhamento de Status (RF04): Visualização do andamento atual do pedido pelo hóspede.
+#### Solicitação de Serviços (RF02 e RF03)
+Criação de pedidos diretamente pelo aplicativo, com possibilidade de adicionar observações.
 
-Painel Administrativo Básico (RF06): Visualização das solicitações em andamento para a gestora e equipe do hotel.
+#### Acompanhamento de Status (RF04)
+Visualização do andamento atual do pedido pelo hóspede.
 
-Atualização de Status: Ação do funcionário de alterar o status do pedido (ex: pendente, em andamento, concluído) através das regras de negócio do PedidoService.
+#### Painel Administrativo Básico (RF06)
+Visualização das solicitações em andamento pela gestora e equipe do hotel.
 
-O que NÃO ENTRA no escopo do MVP:
+#### Atualização de Status
+Permite que funcionários alterem o status dos pedidos (ex.: Pendente, Em Andamento e Concluído) por meio das regras de negócio implementadas no PedidoService.
 
-Relatórios e Métricas (RF08): A geração de dados operacionais e de tempo médio (RelatorioService) será implementada em iterações futuras.
+---
 
-Notificações Push (RF09): O envio automatizado de notificações (NotificacaoService) não estará nesta versão inicial. A atualização dependerá da recarga da tela.
+### ❌ O que NÃO ENTRA no escopo do MVP
 
-Aba de Informações do Hotel (RF10): A exibição de regras e horários estáticos (InformacaoHotel) será postergada.
+#### Relatórios e Métricas (RF08)
+A geração de indicadores operacionais e cálculo de tempo médio (RelatorioService) será implementada em versões futuras.
 
-Distribuição Automática de Tarefas (RF07): A atribuição formal e complexa de funcionários (AtribuicaoPedido) será simplificada. Os funcionários visualizarão uma fila geral de pedidos no painel.
+#### Notificações Push (RF09)
+O envio automático de notificações (NotificacaoService) não estará disponível nesta versão inicial. As atualizações dependerão da recarga da tela.
 
-2. Descrição do Fluxo Principal do Sistema
-O caminho percorrido pela funcionalidade principal, desde a interface até a persistência no banco de dados, seguirá estritamente a Arquitetura em Camadas definida no projeto. O fluxo ocorre da seguinte forma:
+#### Aba de Informações do Hotel (RF10)
+A exibição de regras, horários e informações estáticas (InformacaoHotel) será implementada posteriormente.
 
-Entrada de Dados (Frontend): O hóspede acessa o aplicativo e visualiza os serviços organizados por Categoria. Ao escolher um Servico, preenche as observações e confirma a solicitação, disparando uma requisição HTTP POST /pedidos com os dados em JSON.
+#### Distribuição Automática de Tarefas (RF07)
+A atribuição formal e automatizada de funcionários (AtribuicaoPedido) será simplificada. Os colaboradores visualizarão uma fila geral de pedidos no painel.
 
-Recepção e Validação (Controller): O PedidoController recebe a requisição, realiza as validações básicas de estrutura e aciona a camada inferior.
+---
 
-Processamento (Service): O PedidoService recebe a requisição e aplica as regras de negócio através do método criarPedido(). A classe central Pedido é instanciada e vinculada corretamente ao Hospede e ao Servico correspondentes.
+# 2. Descrição do Fluxo Principal do Sistema
 
-Persistência (Repository): O PedidoService repassa o objeto finalizado para o PedidoRepository, que abstrai a infraestrutura e salva o registro no Banco de Dados com o status inicial.
+O fluxo principal seguirá rigorosamente a Arquitetura em Camadas definida para o projeto.
 
-Confirmação: A resposta de sucesso (HTTP) percorre o caminho inverso até o Frontend, confirmando a criação para o hóspede.
+## 2.1 Entrada de Dados (Frontend)
 
-Atualização pela Equipe: O funcionário acessa o painel (via GET), visualiza a nova tarefa e, ao iniciá-la ou concluí-la, envia uma requisição PUT / PATCH. O PedidoService utiliza o método atualizarStatus() para refletir a mudança no banco de dados, permitindo que o hóspede acompanhe a evolução.
+1. O hóspede acessa o aplicativo.
+2. Visualiza os serviços organizados por categoria.
+3. Seleciona um serviço.
+4. Adiciona observações ao pedido.
+5. Confirma a solicitação.
 
-3. Planejamento Técnico da Implementação
-A implementação técnica conectará as classes do modelo UML diretamente à Arquitetura em Camadas, isolando responsabilidades para garantir manutenibilidade.
+Após a confirmação, o sistema envia uma requisição:
 
-3.1. Infraestrutura e Persistência (Banco de Dados e Repository)
+http
+POST /pedidos
 
-Serão criadas as tabelas relacionais para persistir as entidades vitais do MVP: Hospede, Pedido, Servico, Categoria e Funcionario.
 
-Os repositórios (PedidoRepository e ServicoRepository) atuarão como a única ponte de acesso ao banco, garantindo que o Service não lide com consultas SQL diretas.
+contendo os dados em formato JSON.
 
-3.2. Lógica de Negócio (Service)
+---
 
-A classe PedidoService será desenvolvida para centralizar a lógica. Ela será responsável por garantir que a multiplicidade do modelo seja respeitada, como confirmar que um Pedido pertence a um único Hospede e está associado a um único Servico ativo.
+## 2.2 Recepção e Validação (Controller)
 
-3.3. Controladores e API REST (Controller)
+O PedidoController recebe a requisição e:
 
-Serão implementados o PedidoController e o ServicoController.
+- Valida a estrutura dos dados recebidos;
+- Encaminha a solicitação para a camada de serviços.
 
-Os endpoints essenciais serão disponibilizados: GET (para listar o catálogo no Frontend), POST (para criação de pedidos pelo hóspede) e PUT/PATCH (para a equipe atualizar status).
+---
 
-3.4. Interfaces de Usuário (Frontend)
+## 2.3 Processamento (Service)
 
-Construção de duas interfaces visuais seguindo o requisito de usabilidade (RNF02): a visão do hóspede (focada em solicitação e acompanhamento) e a visão da equipe (focada em listagem e gestão de tarefas).
+O PedidoService recebe a requisição e executa as regras de negócio através do método:
 
-A interface não conterá regras de negócio, limitando-se a exibir dados e capturar ações para enviá-las ao Controller via JSON.
+java
+criarPedido()
+
+
+Nesta etapa:
+
+- Um objeto Pedido é criado;
+- O pedido é associado ao Hospede;
+- O pedido é associado ao Servico selecionado.
+
+---
+
+## 2.4 Persistência (Repository)
+
+O PedidoService envia o objeto finalizado para o:
+
+java
+PedidoRepository
+
+
+Responsabilidades:
+
+- Abstrair o acesso ao banco de dados;
+- Persistir o pedido;
+- Definir o status inicial da solicitação.
+
+---
+
+## 2.5 Confirmação
+
+Após a gravação bem-sucedida:
+
+1. O banco retorna sucesso ao repositório.
+2. O repositório retorna ao serviço.
+3. O serviço retorna ao controlador.
+4. O controlador responde ao Frontend.
+
+O hóspede recebe a confirmação da criação do pedido.
+
+---
+
+## 2.6 Atualização pela Equipe
+
+1. O funcionário acessa o painel administrativo.
+2. Visualiza os pedidos pendentes.
+3. Inicia ou conclui uma tarefa.
+4. Envia uma requisição:
+
+http
+PUT /pedidos/{id}
+
+
+ou
+
+http
+PATCH /pedidos/{id}
+
+
+O PedidoService utiliza o método:
+
+java
+atualizarStatus()
+
+
+para refletir a mudança no banco de dados.
+
+Dessa forma, o hóspede consegue acompanhar a evolução da solicitação em tempo real.
+
+---
+
+# 3. Planejamento Técnico da Implementação
+
+A implementação conectará diretamente as classes do modelo UML à Arquitetura em Camadas, mantendo responsabilidades bem definidas e facilitando a manutenção do sistema.
+
+---
+
+## 3.1 Infraestrutura e Persistência (Banco de Dados e Repository)
+
+Serão criadas as tabelas relacionais para armazenar as entidades essenciais do MVP:
+
+- Hospede
+- Pedido
+- Servico
+- Categoria
+- Funcionario
+
+### Repositórios
+
+Os repositórios serão a única camada responsável pelo acesso aos dados:
+
+- PedidoRepository
+- ServicoRepository
+
+#### Responsabilidades
+
+- Realizar consultas ao banco;
+- Inserir registros;
+- Atualizar informações;
+- Isolar o restante da aplicação de comandos SQL.
+
+---
+
+## 3.2 Lógica de Negócio (Service)
+
+A classe:
+
+java
+PedidoService
+
+
+será responsável por centralizar toda a lógica de negócio.
+
+### Principais responsabilidades
+
+- Validar regras do sistema;
+- Garantir integridade dos relacionamentos;
+- Verificar que cada pedido pertence a um único hóspede;
+- Garantir associação com apenas um serviço ativo;
+- Controlar transições de status.
+
+---
+
+## 3.3 Controladores e API REST (Controller)
+
+Serão implementados os seguintes controladores:
+
+- PedidoController
+- ServicoController
+
+### Endpoints essenciais
+
+#### Listagem de serviços
+
+http
+GET /servicos
+
+
+#### Criação de pedidos
+
+http
+POST /pedidos
+
+
+#### Atualização de status
+
+http
+PUT /pedidos/{id}
+
+
+ou
+
+http
+PATCH /pedidos/{id}
+
+
+Esses endpoints serão utilizados tanto pelo aplicativo do hóspede quanto pelo painel da equipe.
+
+---
+
+## 3.4 Interfaces de Usuário (Frontend)
+
+Serão desenvolvidas duas interfaces principais, seguindo o requisito de usabilidade *RNF02*.
+
+### Visão do Hóspede
+
+Funcionalidades:
+
+- Visualizar catálogo de serviços;
+- Criar solicitações;
+- Adicionar observações;
+- Acompanhar status dos pedidos.
+
+### Visão da Equipe
+
+Funcionalidades:
+
+- Visualizar fila de solicitações;
+- Gerenciar pedidos;
+- Atualizar status das tarefas.
+
+### Responsabilidade do Frontend
+
+A interface não conterá regras de negócio.
+
+Seu papel será apenas:
+
+- Exibir informações;
+- Capturar ações dos usuários;
+- Enviar e receber dados da API através de JSON.
