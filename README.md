@@ -29,7 +29,7 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 <li><a href="docs/02-Sprint1.md"> Sprint 1 - Análise dos Requisitos e Identificação das Classes</a></li>
 <li><a href="docs/03-Sprint 2.md"> Sprint 2 - Modelagem de Classes e Relacionamentos</a></li>
 <li><a href="docs/04-Sprint 3.md"> Sprint 3 - Definição da Arquitetura do Sistema </a></li>
-<li><a href="docs/05-Arquitetura da Solução.md"> Arquitetura da Solução</a></li>
+<li><a href="docs/05-Sprint 4.md"> Sprint 4 - Organização, Integração e Planejamento do MVP</a></li>
 <li><a href="docs/06-Template Padrão da Aplicação.md"> Template Padrão da Aplicação</a></li>
 <li><a href="docs/07-Programação de Funcionalidades.md"> Programação de Funcionalidades</a></li>
 <li><a href="docs/08-Plano de Testes de Software.md"> Plano de Testes de Software</a></li>
